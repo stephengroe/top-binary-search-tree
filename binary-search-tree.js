@@ -1,16 +1,16 @@
 // Build tree
 function buildTree(array) {
 
-  if (array.length <= 1) {
-    return createNode(array[0], null, null);
-  }
+  if (array.length === 0) return null;
+  if (array.length === 1) return createNode(array[0], null, null);
 
   const midpoint = Math.floor(array.length / 2);
   const newNode = createNode(
     array[midpoint],
     buildTree(array.slice(0, midpoint)),
-    buildTree(array.slice(midpoint + 1, array.length - 1))
+    buildTree(array.slice(midpoint + 1, array.length))
   );
+  console.log(newNode);
 
   return newNode;
 }
@@ -56,12 +56,12 @@ function renderNode(root) {
     nodeContent.textContent = root.value;
   }
 
-  if (root.right !== null) {
-    branchContainer.append(renderNode(root.right));
-  }
-
   if (root.left !== null) {
     branchContainer.append(renderNode(root.left));
+  }
+
+  if (root.right !== null) {
+    branchContainer.append(renderNode(root.right));
   }
 
   nodeContainer.append(nodeContent, branchContainer);
@@ -70,9 +70,26 @@ function renderNode(root) {
 
 // Generate random array
 function generateArray(length) {
-  return [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const uniqueSet = new Set();
+
+  while (uniqueSet.size < length) {
+    let randomNumber = Math.round(Math.random() * 100);
+    uniqueSet.add(randomNumber);
+  }
+
+  const array = [...uniqueSet];
+  array.sort((a, b) => a - b);
+  return array;
+
 }
 
-const randomArray = generateArray(10);
-const tree = buildTree(randomArray);
-renderTree(tree);
+document.querySelector("#new-tree-button").addEventListener("click", (e) => {
+  renderTree(
+    buildTree(
+      generateArray(
+        Math.ceil(Math.random() * 50)
+
+      )
+    )
+  );
+});
