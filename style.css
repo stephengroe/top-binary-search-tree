@@ -29,12 +29,20 @@ h1 {
   width: 100%;
 }
 
-.tree-branch {
+.node-container {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.branch-container {
   display: flex;
   flex-flow: row;
   justify-content: center;
-  align-items: center;
-  
+  align-items: flex-start;
+  width: 100%;
 }
 
 .tree-node {
