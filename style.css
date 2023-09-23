@@ -35,7 +35,38 @@ h1 {
   justify-content: center;
   align-items: center;
   width: 100%;
+
+  position: relative;
 }
+
+.node-container::before {
+  display: block;
+  content: '';
+  width: 50%;
+  height: 1px;
+
+
+  background-color: black;
+
+  position: absolute;
+  top: 0px;
+}
+
+/* Hide line on root element */
+#tree-container > .node-container::before {
+  display: none;
+}
+
+.node-container:last-child::before {
+  transform: rotate(15deg);
+  left: 0px;
+}
+
+.node-container:first-child::before {
+  transform: rotate(-15deg);
+  right: 0px;
+}
+
 
 .branch-container {
   display: flex;
@@ -48,10 +79,13 @@ h1 {
 
 .tree-node {
   padding: 1em;
+  margin: 0;
 
   border-radius: 100%;
   border: 1px solid gray;
   box-shadow: 0 0 10px rgba(125 125 125 / 0.5);
+  background-color: white;
+  z-index: 999;
 }
 
 .button-div {

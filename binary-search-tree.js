@@ -10,8 +10,6 @@ function buildTree(array) {
     buildTree(array.slice(0, midpoint)),
     buildTree(array.slice(midpoint + 1, array.length))
   );
-  console.log(newNode);
-
   return newNode;
 }
 
@@ -88,7 +86,7 @@ document.querySelector("#new-tree-button").addEventListener("click", (e) => {
     buildTree(
       prepArray(
         generateArray(
-          Math.ceil(Math.random() * 50)
+          Math.ceil(Math.random() * 100)
         )
       )
     )
