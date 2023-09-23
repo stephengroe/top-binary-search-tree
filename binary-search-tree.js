@@ -70,25 +70,26 @@ function renderNode(root) {
 
 // Generate random array
 function generateArray(length) {
-  const uniqueSet = new Set();
-
-  while (uniqueSet.size < length) {
-    let randomNumber = Math.round(Math.random() * 100);
-    uniqueSet.add(randomNumber);
+  const array = []
+  for (let i=0; i<length; i++) {
+    array.push(Math.round(Math.random() * 100));
   }
-
-  const array = [...uniqueSet];
-  array.sort((a, b) => a - b);
   return array;
+}
 
+// Remove duplicates and sort array
+function prepArray(array) {
+  const uniqueSet = new Set([...array]);
+  return Array.from(uniqueSet).sort((a, b) => a - b);
 }
 
 document.querySelector("#new-tree-button").addEventListener("click", (e) => {
   renderTree(
     buildTree(
-      generateArray(
-        Math.ceil(Math.random() * 50)
-
+      prepArray(
+        generateArray(
+          Math.ceil(Math.random() * 50)
+        )
       )
     )
   );
