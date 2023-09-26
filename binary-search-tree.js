@@ -183,6 +183,56 @@ function isLeaf(node) {
   return false;
 };
 
+// Print values
+
+function levelOrder(root) {
+  const valueArray = [];
+  const stack = [root];
+
+  while (stack.length > 0) {
+    const node = stack.shift();
+    valueArray.push(node.value);
+    if (node.left) stack.push(node.left);
+    if (node.right) stack.push(node.right);
+  }
+
+  return valueArray;
+}
+
+function preorder(root) {
+  const valueArray = [];
+  if (root === null) return;
+
+  valueArray.push(root.value);
+  if (root.left !== null) valueArray.push(preorder(root.left));
+  if (root.right !== null) valueArray.push(preorder(root.right));
+
+  return valueArray;
+}
+
+function inorder(root) {
+  const valueArray = [];
+  if (root === null) return;
+
+  if (root.left !== null) valueArray.push(inorder(root.left));
+  valueArray.push(root.value);
+  if (root.right !== null) valueArray.push(inorder(root.right));
+
+  return valueArray;
+}
+
+function postorder(root) {
+  const valueArray = [];
+  if (root === null) return;
+
+  if (root.left !== null) valueArray.push(postorder(root.left));
+  if (root.right !== null) valueArray.push(postorder(root.right));
+  valueArray.push(root.value);
+
+  return valueArray;
+}
+
+
 // Initialize
 let rootNode;
 let nodeArray;
@@ -204,6 +254,32 @@ document.querySelector("#delete-button").addEventListener("click", () => {
     rootNode);
   renderTree(rootNode);
 });
+
+document.querySelector("#level-order-button").addEventListener("click", () => {
+  const p = document.createElement("p");
+  p.textContent = `Level order: ${levelOrder(rootNode)}`;
+  document.querySelector("output").append(p);
+});
+
+document.querySelector("#preorder-button").addEventListener("click", () => {
+  const p = document.createElement("p");
+  p.textContent = `Preorder: ${preorder(rootNode)}`;
+  document.querySelector("output").append(p);
+});
+
+document.querySelector("#inorder-button").addEventListener("click", () => {
+  const p = document.createElement("p");
+  p.textContent = `Inorder: ${inorder(rootNode)}`;
+  document.querySelector("output").append(p);
+});
+
+document.querySelector("#postorder-button").addEventListener("click", () => {
+  const p = document.createElement("p");
+  p.textContent = `Postorder: ${postorder(rootNode)}`;
+  document.querySelector("output").append(p);
+});
+
+
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
