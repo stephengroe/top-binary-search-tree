@@ -86,6 +86,12 @@ function prepArray(array) {
   return Array.from(uniqueSet).sort((a, b) => a - b);
 }
 
+function refreshTree() {
+  nodeArray = generateArray(Math.ceil(Math.random() * 20));
+  rootNode = buildTree(nodeArray);
+  renderTree(rootNode);
+}
+
 // Insert, delete, search
 function insertNode(node, root) {
   if (node > root.value) {
@@ -106,17 +112,85 @@ function insertNode(node, root) {
   return;
 };
 
-function deleteNode(node, root) {
-  
+function deleteNode(value, root) {
+  console.log(`Deleting ${value} at ${root.value}...`);
 
+  if (root.left && root.left.value === value) {
+    const leftNode = root.left;
+    
+    // Leaf node
+    if (isLeaf(leftNode)) {
+      console.log("Leaf node");
+      root.left = null;
+    
+    // Single branch
+    } else if (!leftNode.left || !leftNode.right) {
+      console.log("Single branch");
+      root.left = leftNode.left;
+      root.right = leftNode.right;
+    
+    // Multiple branches
+    } else {
+      console.log("Multiple branches");
+
+      let smallestParent = root.right.left;
+
+      while (!isLeaf(smallestParent.left)) {
+        smallestParent = smallestParent.left;
+      }
+    
+      root.left.value = smallestParent.left.value;
+      smallestParent.left = null;
+    }
+  } else if (root.right && root.right.value === value) {
+    const rightNode = root.right;
+    
+    // Leaf node
+    if (isLeaf(rightNode)) {
+      console.log("Leaf node");
+      root.right = null;
+    
+    // Single branch
+    } else if (!rightNode.left || !rightNode.right) {
+      console.log("Single branch");
+      root.left = rightNode.left;
+      root.right = rightNode.right;
+    
+    // Multiple branches
+    } else {
+      console.log("Multiple branches");
+
+      let smallestParent = root.right.left;
+
+      while (!isLeaf(smallestParent.left)) {
+        smallestParent = smallestParent.left;
+      }
+    
+      root.right.value = smallestParent.left.value;
+      smallestParent.left = null;
+    }
+  } else if (value < root.value && root.left) {
+    deleteNode(value, root.left);
+  } else if (value > root.value && root.right) {
+    deleteNode(value, root.right);
+  } else {
+    return;
+  }
+};
+
+function isLeaf(node) {
+  if (node.right === null && node.left === null) return true;
+  return false;
 };
 
 // Initialize
 let rootNode;
+let nodeArray;
+
+refreshTree();
 
 document.querySelector("#new-tree-button").addEventListener("click", (e) => {
-  rootNode = buildTree(generateArray(Math.ceil(Math.random() * 100)));
-  renderTree(rootNode);
+  refreshTree();
 });
 
 document.querySelector("#insert-button").addEventListener("click", () => {
@@ -125,6 +199,21 @@ document.querySelector("#insert-button").addEventListener("click", () => {
 });
 
 document.querySelector("#delete-button").addEventListener("click", () => {
-  deleteNode(Math.ceil(Math.random() * 1000), rootNode);
+  deleteNode(
+    nodeArray[Math.floor(Math.random() * nodeArray.length)],
+    rootNode);
   renderTree(rootNode);
 });
+
+const prettyPrint = (node, prefix = "", isLeft = true) => {
+  if (node === null) {
+    return;
+  }
+  if (node.right !== null) {
+    prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+  }
+  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
+  if (node.left !== null) {
+    prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+  }
+};
