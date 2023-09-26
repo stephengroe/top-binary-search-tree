@@ -1,5 +1,6 @@
 // Build tree
-function buildTree(array) {
+function buildTree(sourceArray) {
+  const array = prepArray(sourceArray.slice());
 
   if (array.length === 0) return null;
   if (array.length === 1) return createNode(array[0], null, null);
@@ -20,7 +21,7 @@ function createTree(root) {
   }
 }
 
-function createNode(value, left, right) {
+function createNode(value, left=null, right=null) {
   return {
     value,
     left,
@@ -70,7 +71,7 @@ function renderNode(root) {
 function generateArray(length) {
   const array = []
   for (let i=0; i<length; i++) {
-    array.push(Math.round(Math.random() * 100));
+    array.push(Math.round(Math.random() * 1000));
   }
   return array;
 }
@@ -81,14 +82,36 @@ function prepArray(array) {
   return Array.from(uniqueSet).sort((a, b) => a - b);
 }
 
+// Insert, delete, search
+function insertNode(node, root) {
+  if (node > root.value) {
+    if (root.right === null) {
+      root.right = createNode(node);
+    } else {
+      insertNode(node, root.right);
+    }
+  }
+
+  if (node < root.value) {
+    if (root.left === null) {
+      root.left = createNode(node);
+    } else {
+      insertNode(node, root.left);
+    }
+  }
+  return;
+};
+
+
+// Initialize
+let rootNode;
+
 document.querySelector("#new-tree-button").addEventListener("click", (e) => {
-  renderTree(
-    buildTree(
-      prepArray(
-        generateArray(
-          Math.ceil(Math.random() * 100)
-        )
-      )
-    )
-  );
+  rootNode = buildTree(generateArray(Math.ceil(Math.random() * 100)));
+  renderTree(rootNode);
+});
+
+document.querySelector("#insert-button").addEventListener("click", () => {
+  insertNode(Math.ceil(Math.random() * 1000), rootNode);
+  renderTree(rootNode);
 });
