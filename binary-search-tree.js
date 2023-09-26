@@ -57,10 +57,14 @@ function renderNode(root) {
 
   if (root.left !== null) {
     branchContainer.append(renderNode(root.left));
+  } else {
+    branchContainer.append(nodeContent);
   }
 
   if (root.right !== null) {
     branchContainer.append(renderNode(root.right));
+  } else {
+    branchContainer.append(nodeContent);
   }
 
   nodeContainer.append(nodeContent, branchContainer);
@@ -102,6 +106,10 @@ function insertNode(node, root) {
   return;
 };
 
+function deleteNode(node, root) {
+  
+
+};
 
 // Initialize
 let rootNode;
@@ -113,5 +121,10 @@ document.querySelector("#new-tree-button").addEventListener("click", (e) => {
 
 document.querySelector("#insert-button").addEventListener("click", () => {
   insertNode(Math.ceil(Math.random() * 1000), rootNode);
+  renderTree(rootNode);
+});
+
+document.querySelector("#delete-button").addEventListener("click", () => {
+  deleteNode(Math.ceil(Math.random() * 1000), rootNode);
   renderTree(rootNode);
 });

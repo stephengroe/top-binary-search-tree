@@ -46,6 +46,7 @@ h1 {
 
   position: absolute;
   top: 0px;
+  left: 25%;
 }
 
 .branch-container:empty::before {
@@ -53,19 +54,17 @@ h1 {
 }
 
 .branch-container {
-  display: flex;
-  flex-flow: row;
-  justify-content: center;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
   width: 100%;
-  margin: 0.25em;
   position: relative;
   padding-top: 5px;
 }
 
 .tree-node {
   padding: 1em;
-  margin: 0 auto;
+  margin: auto;
 
   border-radius: 100%;
   border: 1px solid gray;
