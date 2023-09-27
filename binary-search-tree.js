@@ -290,6 +290,13 @@ function postorder(root) {
   return valueArray.flat(Infinity);
 };
 
+// Balancing functions
+
+function rebalance(root) {
+  const nodeList = inorder(root);
+  return buildTree(nodeList);
+}
+
 // Initialize
 let rootNode;
 let nodeArray;
@@ -309,6 +316,11 @@ document.querySelector("#insert-button").addEventListener("click", () => {
 
 document.querySelector("#delete-button").addEventListener("click", () => {
   deleteNode(randomNode(rootNode), rootNode);
+  renderTree(rootNode);
+});
+
+document.querySelector("#rebalance-button").addEventListener("click", () => {
+  rootNode = rebalance(rootNode);
   renderTree(rootNode);
 });
 
