@@ -52,19 +52,20 @@ function renderTree(root) {
   const l1 = document.createElement("li");
   l1.textContent = `Level order: ${levelOrder(rootNode)}`;
   const l2 = document.createElement("li");
-  l2.textContent = `Inorder: ${inorder(rootNode)}`
+  l2.textContent = `Inorder: ${inorder(rootNode)}`;
   const l3 = document.createElement("li");
-  l3.textContent = `Preorder: ${preorder(rootNode)}`
+  l3.textContent = `Preorder: ${preorder(rootNode)}`;
   const l4 = document.createElement("li");
-  l4.textContent = `Postorder: ${postorder(rootNode)}`
+  l4.textContent = `Postorder: ${postorder(rootNode)}`;
   const l5 = document.createElement("li");
-  l5.textContent = `Tree height: ${height(rootNode)}`
+  l5.textContent = `Tree height: ${height(rootNode)}`;
   const l6 = document.createElement("li");
   const depthNode = randomNode(rootNode);
-  l6.textContent = `Depth of node ${depthNode.value}: ${depth(depthNode, rootNode)}`
+  l6.textContent = `Depth of node ${depthNode.value}: ${depth(depthNode, rootNode)}`;
+  const l7 = document.createElement("li");
+  l7.textContent = `Is this tree balanced? ${isBalanced(rootNode)}`;
 
-
-  list.append(l1, l2, l3, l4, l5, l6);
+  list.append(l1, l2, l3, l4, l5, l6, l7);
   dataContainer.append(list);
 };
 
@@ -226,13 +227,8 @@ function find(value, root) {
 };
 
 function height(node) {
-  if (isLeaf(node)) return 0;
-
-  const array = [];
-  if (node.right !== null) array.push(1 + height(node.right));
-  if (node.left !== null) array.push(1 + height(node.left));
-
-  return Math.max(...array);
+  if (node === null || isLeaf(node)) return 0;
+  return Math.max(height(node.right), height(node.left)) + 1;
 };
 
 function depth(node, root) {
@@ -291,6 +287,16 @@ function postorder(root) {
 };
 
 // Balancing functions
+function isBalanced(node) {
+  if (node === null) return true;
+
+  const diff = Math.abs(height(node.left) - height(node.right));
+  const left = isBalanced(node.left);
+  const right = isBalanced(node.right);
+
+  if (diff <= 1 && left && right) return true;
+  return false;
+}
 
 function rebalance(root) {
   const nodeList = inorder(root);
