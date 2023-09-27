@@ -32,6 +32,7 @@ h1 {
 .node-container {
   display: grid;
   justify-content: center;
+  align-content: flex-start;
   width: 100%;
 }
 
@@ -49,7 +50,20 @@ h1 {
   left: 25%;
 }
 
-.branch-container:empty::before {
+.branch-container::after {
+  display: block;
+  content: '';
+  width: 1px;
+  height: 5px;
+
+  background-color: black;
+
+  position: absolute;
+  top: -5px;
+  right: 50%;
+}
+
+.branch-container:empty::before, .branch-container:empty::after {
   display: none;
 }
 
@@ -65,6 +79,7 @@ h1 {
 .tree-node {
   padding: 1em;
   margin: auto;
+  margin-bottom: .25rem;
 
   border-radius: 100%;
   border: 1px solid gray;
@@ -72,23 +87,6 @@ h1 {
   background-color: white;
   z-index: 999;
   position: relative;
-}
-
-.tree-node::after {
-  display: block;
-  content: '';
-  width: 1px;
-  height: 5px;
-
-  background-color: black;
-
-  position: absolute;
-  bottom: -5px;
-  right: 50%;
-}
-
-.tree-node::after .branch-container:empty  {
-  display: none;
 }
 
 #button-wrapper {
