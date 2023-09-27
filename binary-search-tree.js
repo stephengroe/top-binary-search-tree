@@ -12,14 +12,14 @@ function buildTree(sourceArray) {
     buildTree(array.slice(midpoint + 1, array.length))
   );
   return newNode;
-}
+};
 
 // Factory functions
 function createTree(root) {
   return {
     root,
   }
-}
+};
 
 function createNode(value, left=null, right=null) {
   return {
@@ -27,17 +27,41 @@ function createNode(value, left=null, right=null) {
     left,
     right,
   }
-}
+};
 
 // Render tree
 function renderTree(root) {
-  const container = document.querySelector("#tree-container");
+  
+  // Render tree
+  const treeContainer = document.querySelector("#tree-container");
 
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
+  while (treeContainer.firstChild) {
+    treeContainer.removeChild(treeContainer.firstChild);
   }
-  container.append(renderNode(root));
-}
+  treeContainer.append(renderNode(root));
+
+  // Render data
+  const dataContainer = document.querySelector("#data-container");
+
+  while (dataContainer.firstChild) {
+    dataContainer.removeChild(dataContainer.firstChild);
+  }
+
+  const br1 = document.createElement("br");
+  const br2 = document.createElement("br");
+  const br3 = document.createElement("br");
+  const br4 = document.createElement("br");
+
+  dataContainer.append(`Level order: ${levelOrder(rootNode)}`);
+  dataContainer.append(br1);
+  dataContainer.append(`Inorder: ${inorder(rootNode)}`);
+  dataContainer.append(br2);
+  dataContainer.append(`Preorder: ${preorder(rootNode)}`);
+  dataContainer.append(br3);
+  dataContainer.append(`Postorder: ${postorder(rootNode)}`);
+  dataContainer.append(br4);
+  dataContainer.append(`Total height: ${height(rootNode)}`);
+};
 
 function renderNode(root) {
   let nodeContainer = document.createElement("div");
@@ -69,7 +93,7 @@ function renderNode(root) {
 
   nodeContainer.append(nodeContent, branchContainer);
   return nodeContainer;
-}
+};
 
 // Generate random array
 function generateArray(length) {
@@ -78,19 +102,19 @@ function generateArray(length) {
     array.push(Math.round(Math.random() * 1000));
   }
   return array;
-}
+};
 
 // Remove duplicates and sort array
 function prepArray(array) {
   const uniqueSet = new Set([...array]);
   return Array.from(uniqueSet).sort((a, b) => a - b);
-}
+};
 
 function refreshTree() {
-  nodeArray = generateArray(Math.ceil(Math.random() * 20));
+  nodeArray = generateArray(Math.ceil(Math.random() * 25));
   rootNode = buildTree(nodeArray);
   renderTree(rootNode);
-}
+};
 
 // Insert, delete, search
 function insertNode(node, root) {
@@ -183,8 +207,17 @@ function isLeaf(node) {
   return false;
 };
 
-// Print values
+function height(node) {
+  if (isLeaf(node)) return 0;
 
+  const array = [];
+  if (node.right !== null) array.push(1 + height(node.right));
+  if (node.left !== null) array.push(1 + height(node.left));
+
+  return Math.max(...array);
+};
+
+// Print values
 function levelOrder(root) {
   const valueArray = [];
   const stack = [root];
@@ -196,8 +229,8 @@ function levelOrder(root) {
     if (node.right) stack.push(node.right);
   }
 
-  return valueArray;
-}
+  return valueArray.flat(Infinity);
+};
 
 function preorder(root) {
   const valueArray = [];
@@ -207,8 +240,8 @@ function preorder(root) {
   if (root.left !== null) valueArray.push(preorder(root.left));
   if (root.right !== null) valueArray.push(preorder(root.right));
 
-  return valueArray;
-}
+  return valueArray.flat(Infinity);
+};
 
 function inorder(root) {
   const valueArray = [];
@@ -218,8 +251,8 @@ function inorder(root) {
   valueArray.push(root.value);
   if (root.right !== null) valueArray.push(inorder(root.right));
 
-  return valueArray;
-}
+  return valueArray.flat(Infinity);
+};
 
 function postorder(root) {
   const valueArray = [];
@@ -229,9 +262,8 @@ function postorder(root) {
   if (root.right !== null) valueArray.push(postorder(root.right));
   valueArray.push(root.value);
 
-  return valueArray;
-}
-
+  return valueArray.flat(Infinity);
+};
 
 // Initialize
 let rootNode;
@@ -249,37 +281,11 @@ document.querySelector("#insert-button").addEventListener("click", () => {
 });
 
 document.querySelector("#delete-button").addEventListener("click", () => {
-  deleteNode(
-    nodeArray[Math.floor(Math.random() * nodeArray.length)],
-    rootNode);
+  const nodeList = inorder(rootNode);
+  const randomIndex = Math.floor(Math.random() * nodeList.length);
+  deleteNode(nodeList[randomIndex], rootNode);
   renderTree(rootNode);
 });
-
-document.querySelector("#level-order-button").addEventListener("click", () => {
-  const p = document.createElement("p");
-  p.textContent = `Level order: ${levelOrder(rootNode)}`;
-  document.querySelector("output").append(p);
-});
-
-document.querySelector("#preorder-button").addEventListener("click", () => {
-  const p = document.createElement("p");
-  p.textContent = `Preorder: ${preorder(rootNode)}`;
-  document.querySelector("output").append(p);
-});
-
-document.querySelector("#inorder-button").addEventListener("click", () => {
-  const p = document.createElement("p");
-  p.textContent = `Inorder: ${inorder(rootNode)}`;
-  document.querySelector("output").append(p);
-});
-
-document.querySelector("#postorder-button").addEventListener("click", () => {
-  const p = document.createElement("p");
-  p.textContent = `Postorder: ${postorder(rootNode)}`;
-  document.querySelector("output").append(p);
-});
-
-
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
