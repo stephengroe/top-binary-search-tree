@@ -51,6 +51,7 @@ function renderTree(root) {
   const br2 = document.createElement("br");
   const br3 = document.createElement("br");
   const br4 = document.createElement("br");
+  const br5 = document.createElement("br");
 
   dataContainer.append(`Level order: ${levelOrder(rootNode)}`);
   dataContainer.append(br1);
@@ -61,6 +62,9 @@ function renderTree(root) {
   dataContainer.append(`Postorder: ${postorder(rootNode)}`);
   dataContainer.append(br4);
   dataContainer.append(`Total height: ${height(rootNode)}`);
+  dataContainer.append(br5);
+  const depthNode = randomNode(rootNode);
+  dataContainer.append(`Depth of ${depthNode.value}: ${depth(depthNode, rootNode)}`);
 };
 
 function renderNode(root) {
@@ -114,6 +118,12 @@ function refreshTree() {
   nodeArray = generateArray(Math.ceil(Math.random() * 25));
   rootNode = buildTree(nodeArray);
   renderTree(rootNode);
+};
+
+function randomNode(root) {
+  const nodeList = inorder(root);
+  const randomIndex = Math.floor(Math.random() * nodeList.length);
+  return find(nodeList[randomIndex], root);
 };
 
 // Insert, delete, search
@@ -207,6 +217,13 @@ function isLeaf(node) {
   return false;
 };
 
+function find(value, root) {
+  if (value === root.value) return root;
+  if (value < root.value && root.left) return find(value, root.left);
+  if (value > root.value && root.right) return find(value, root.right);
+  return null;
+};
+
 function height(node) {
   if (isLeaf(node)) return 0;
 
@@ -216,6 +233,13 @@ function height(node) {
 
   return Math.max(...array);
 };
+
+function depth(node, root) {
+  if (root.value === node.value) return 0;
+  if (node.value < root.value && root.left) return 1 + depth(node, root.left);
+  if (node.value > root.value && root.right) return 1 + depth(node, root.right);
+  return -1;
+}
 
 // Print values
 function levelOrder(root) {
@@ -271,6 +295,8 @@ let nodeArray;
 
 refreshTree();
 
+// Buttons
+
 document.querySelector("#new-tree-button").addEventListener("click", (e) => {
   refreshTree();
 });
@@ -281,9 +307,7 @@ document.querySelector("#insert-button").addEventListener("click", () => {
 });
 
 document.querySelector("#delete-button").addEventListener("click", () => {
-  const nodeList = inorder(rootNode);
-  const randomIndex = Math.floor(Math.random() * nodeList.length);
-  deleteNode(nodeList[randomIndex], rootNode);
+  deleteNode(randomNode(rootNode), rootNode);
   renderTree(rootNode);
 });
 
