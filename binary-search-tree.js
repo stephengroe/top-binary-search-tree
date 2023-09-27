@@ -47,24 +47,25 @@ function renderTree(root) {
     dataContainer.removeChild(dataContainer.firstChild);
   }
 
-  const br1 = document.createElement("br");
-  const br2 = document.createElement("br");
-  const br3 = document.createElement("br");
-  const br4 = document.createElement("br");
-  const br5 = document.createElement("br");
+  const list = document.createElement("ul");
 
-  dataContainer.append(`Level order: ${levelOrder(rootNode)}`);
-  dataContainer.append(br1);
-  dataContainer.append(`Inorder: ${inorder(rootNode)}`);
-  dataContainer.append(br2);
-  dataContainer.append(`Preorder: ${preorder(rootNode)}`);
-  dataContainer.append(br3);
-  dataContainer.append(`Postorder: ${postorder(rootNode)}`);
-  dataContainer.append(br4);
-  dataContainer.append(`Total height: ${height(rootNode)}`);
-  dataContainer.append(br5);
+  const l1 = document.createElement("li");
+  l1.textContent = `Level order: ${levelOrder(rootNode)}`;
+  const l2 = document.createElement("li");
+  l2.textContent = `Inorder: ${inorder(rootNode)}`
+  const l3 = document.createElement("li");
+  l3.textContent = `Preorder: ${preorder(rootNode)}`
+  const l4 = document.createElement("li");
+  l4.textContent = `Postorder: ${postorder(rootNode)}`
+  const l5 = document.createElement("li");
+  l5.textContent = `Tree height: ${height(rootNode)}`
+  const l6 = document.createElement("li");
   const depthNode = randomNode(rootNode);
-  dataContainer.append(`Depth of ${depthNode.value}: ${depth(depthNode, rootNode)}`);
+  l6.textContent = `Depth of node ${depthNode.value}: ${depth(depthNode, rootNode)}`
+
+
+  list.append(l1, l2, l3, l4, l5, l6);
+  dataContainer.append(list);
 };
 
 function renderNode(root) {
