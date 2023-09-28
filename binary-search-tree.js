@@ -63,20 +63,31 @@ function renderTree(root) {
   const depthNode = randomNode(rootNode);
   l6.textContent = `Depth of node ${depthNode.value}: ${depth(depthNode, rootNode)}`;
   const l7 = document.createElement("li");
-  l7.textContent = `Is this tree balanced? ${isBalanced(rootNode)}`;
+  l7.textContent = `Balanced? ${isBalanced(rootNode)}`;
 
   list.append(l1, l2, l3, l4, l5, l6, l7);
   dataContainer.append(list);
 };
 
 function renderNode(root) {
-  let nodeContainer = document.createElement("div");
+
+  if (root.value === null) {
+    const empty = document.createElement("div");
+    empty.setAttribute("class", "node-container");
+    empty.textContent = "Tree is empty!";
+    return empty;
+  }
+
+  const nodeContainer = document.createElement("div");
   nodeContainer.setAttribute("class", "node-container");
 
-  let nodeContent = document.createElement("p");
+  const emptyNode = document.createElement("div");
+  emptyNode.setAttribute("class", "node-container");
+
+  const nodeContent = document.createElement("p");
   nodeContent.setAttribute("class", "tree-node");
 
-  let branchContainer = document.createElement("div");
+  const branchContainer = document.createElement("div");
   branchContainer.setAttribute("class", "branch-container");
 
   if (root === null) {
@@ -85,16 +96,18 @@ function renderNode(root) {
     nodeContent.textContent = root.value;
   }
 
-  if (root.left !== null) {
-    branchContainer.append(renderNode(root.left));
-  } else {
-    branchContainer.append(nodeContent);
-  }
-
-  if (root.right !== null) {
-    branchContainer.append(renderNode(root.right));
-  } else {
-    branchContainer.append(nodeContent);
+  if (root.left !== null || root.right !== null) {
+    if (root.left !== null) {
+      branchContainer.append(renderNode(root.left));
+    } else {
+      branchContainer.append(emptyNode);
+    }
+  
+    if (root.right !== null) {
+      branchContainer.append(renderNode(root.right));
+    } else {
+      branchContainer.append(emptyNode);
+    }
   }
 
   nodeContainer.append(nodeContent, branchContainer);
@@ -149,67 +162,50 @@ function insertNode(node, root) {
 };
 
 function deleteNode(value, root) {
-  console.log(`Deleting ${value} at ${root.value}...`);
 
-  if (root.left && root.left.value === value) {
-    const leftNode = root.left;
-    
-    // Leaf node
-    if (isLeaf(leftNode)) {
-      console.log("Leaf node");
-      root.left = null;
-    
-    // Single branch
-    } else if (!leftNode.left || !leftNode.right) {
-      console.log("Single branch");
-      root.left = leftNode.left;
-      root.right = leftNode.right;
-    
-    // Multiple branches
-    } else {
-      console.log("Multiple branches");
+  let node = find(value, root);
 
-      let smallestParent = root.right.left;
+  // Multiple branches: swap with next-biggest node (last left on right branch)
+  if (node.left && node.right) {
+    let nextBiggest = node.right;
 
-      while (!isLeaf(smallestParent.left)) {
-        smallestParent = smallestParent.left;
-      }
-    
-      root.left.value = smallestParent.left.value;
-      smallestParent.left = null;
+    while (nextBiggest.left) {
+      nextBiggest = nextBiggest.left;
     }
-  } else if (root.right && root.right.value === value) {
-    const rightNode = root.right;
-    
-    // Leaf node
-    if (isLeaf(rightNode)) {
-      console.log("Leaf node");
-      root.right = null;
-    
-    // Single branch
-    } else if (!rightNode.left || !rightNode.right) {
-      console.log("Single branch");
-      root.left = rightNode.left;
-      root.right = rightNode.right;
-    
-    // Multiple branches
-    } else {
-      console.log("Multiple branches");
 
-      let smallestParent = root.right.left;
+    const replacementValue = nextBiggest.value;
+    deleteNode(nextBiggest.value, root);
+    node.value = replacementValue;
+    return;
+  }
 
-      while (!isLeaf(smallestParent.left)) {
-        smallestParent = smallestParent.left;
-      }
-    
-      root.right.value = smallestParent.left.value;
-      smallestParent.left = null;
+  // Single branch: replace parent reference with branch node
+  if (node.left || node.right) {
+
+    // Root node: set value to next branch node
+    if (value === root.value) {
+
+      root = node.left || node.right;
+      rootNode = root;
+      return;
     }
-  } else if (value < root.value && root.left) {
-    deleteNode(value, root.left);
-  } else if (value > root.value && root.right) {
-    deleteNode(value, root.right);
-  } else {
+
+    const [parent, direction] = findParent(value, root);
+    parent[direction] = node.left || node.right;
+    return;
+  }
+
+  // Leaf node: change parent reference to null
+  if (!(node.right || node.left)) {
+
+    // Root node: set value to null
+    if (value === root.value) {
+      root.value = null;
+      return;
+    }
+
+    const [parent, direction] = findParent(value, root);
+    parent[direction] = null
     return;
   }
 };
@@ -226,8 +222,22 @@ function find(value, root) {
   return null;
 };
 
+function findParent(value, root) {
+  if (root.left && value === root.left.value) {
+    return [root, "left"];
+  }
+
+  if (root.right && value === root.right.value) {
+    return [root, "right"];
+  }
+
+  if (value < root.value && root.left) return findParent(value, root.left);
+  if (value > root.value && root.right) return findParent(value, root.right);
+  return [null, null];
+};
+
 function height(node) {
-  if (node === null || isLeaf(node)) return 0;
+  if (node === null) return 0;
   return Math.max(height(node.right), height(node.left)) + 1;
 };
 
@@ -289,12 +299,8 @@ function postorder(root) {
 // Balancing functions
 function isBalanced(node) {
   if (node === null) return true;
-
   const diff = Math.abs(height(node.left) - height(node.right));
-  const left = isBalanced(node.left);
-  const right = isBalanced(node.right);
-
-  if (diff <= 1 && left && right) return true;
+  if (diff <= 1 && isBalanced(node.left) && isBalanced(node.right)) return true;
   return false;
 }
 
@@ -321,7 +327,12 @@ document.querySelector("#insert-button").addEventListener("click", () => {
 });
 
 document.querySelector("#delete-button").addEventListener("click", () => {
-  deleteNode(randomNode(rootNode), rootNode);
+  const start = inorder(rootNode).length;
+  const random = randomNode(rootNode);
+  console.log(`Deleting ${random.value}...`);
+  deleteNode(random.value, rootNode);
+  const end = inorder(rootNode).length;
+  console.log(`Removed ${start - end} nodes`);
   renderTree(rootNode);
 });
 
