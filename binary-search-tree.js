@@ -184,7 +184,7 @@ function deleteNode(value, root) {
 
     // Root node: set value to next branch node
     if (value === root.value) {
-
+      debugger;
       root = node.left || node.right;
       rootNode = root;
       return;
@@ -238,7 +238,8 @@ function findParent(value, root) {
 
 function height(node) {
   if (node === null) return 0;
-  return Math.max(height(node.right), height(node.left)) + 1;
+  if (node.right === null && node.left === null) return 0;
+  return Math.max(height(node.left), height(node.right)) + 1;
 };
 
 function depth(node, root) {
